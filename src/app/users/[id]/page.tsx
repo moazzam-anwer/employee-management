@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 // import { redirect } from 'next/navigation';
-import DeleteUserButton from './DeleteUserButton'; // Client component
+import DeleteUserButton from '../../components/DeleteUserButton'; // Client component
 
 type Props = {
   params: { id: string };
