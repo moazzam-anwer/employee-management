@@ -20,7 +20,7 @@ export default function EditUser({ params }: Props) {
         return undefined;
       }
       let result = await res.json();
-      console.log('result===', result);
+      
       if (result.name) {
         setName(result.name);
       }
