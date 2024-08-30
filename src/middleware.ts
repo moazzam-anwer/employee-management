@@ -27,10 +27,12 @@ export async function middleware(req: NextRequest) {
   });
 
   let verifiedToken = token;
+  console.log('isProtected',isProtected,token,req.nextUrl.pathname)
   if(isProtected) {
     
     if (!token) {
-      return NextResponse.json({ message: 'Missing or invalid token' });
+      return NextResponse.redirect(new URL('/login', req.url));
+      // return NextResponse.json({ message: 'Missing or invalid token' });
     } 
     
   
@@ -38,18 +40,12 @@ export async function middleware(req: NextRequest) {
     // verifiedToken = await jwtVerify(token, SECRET_KEY);
   
     if (!verifiedToken) {
-      return NextResponse.json({ message: 'Invalid or expired token' });
+      return NextResponse.redirect(new URL('/login', req.url));
+      // return NextResponse.json({ message: 'Invalid or expired token' });
     }
   
   
-    // Check if the request URL matches the login page, allow access
-    if (req.nextUrl.pathname === '/login') {
-      return NextResponse.next();
-    }
-  }
 
-  if (req.nextUrl.pathname === '/login' && verifiedToken) {
-    return NextResponse.redirect(new URL('/', req.url));
   }
 
   // If the token is present and user is trying to access a protected route, allow access

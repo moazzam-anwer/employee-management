@@ -11,7 +11,7 @@ type Props = {
 async function getUser(id: string) {
   console.log("getUser");
   
-  const res = await fetch(`http://localhost:3000/api/user?id=${id}`, { cache: 'no-store' });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/user?id=${id}`, { cache: 'no-store' });
   if (!res.ok) {
     return undefined;
   }

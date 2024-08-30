@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 
 export default function Login() {
+  console.log("in login componnent")
   const router = useRouter();
 
   // State to manage form inputs and errors
@@ -46,7 +47,7 @@ export default function Login() {
 
       try {
     
-        const loginres = await fetch('/api/login', {
+        const loginres = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password }),
@@ -72,17 +73,18 @@ export default function Login() {
       }
     }
   };
+  console.log("in login render")
 
   return (
-    <div>
+    <div className="form-container">
       <h1>Login Now</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form className="form-container" onSubmit={handleSubmit}>
+        <div className='input-group'>
           <label>Name:</label>
           <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
           {errors.username && <p style={{ color: 'red' }}>{errors.username}</p>}
         </div>
-        <div>
+        <div className='input-group'>
           <label>Password:</label>
           <input
             type="password"
