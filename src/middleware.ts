@@ -1,15 +1,9 @@
 // middleware.ts
 import { NextRequest, NextResponse } from 'next/server';
-// import jwt from 'jsonwebtoken';
-import { jwtVerify } from 'jose';
+
 
 // List of protected routes
 const protectedRoutes = ['/','/users', '/users/:id'];
-
-const SECRET_KEY = new TextEncoder().encode('SECRETKEYUSERCRUDAPP'); 
-
-// let response = NextResponse.next();
-//       response.cookies.set('authToken',token)
 
 export async function middleware(req: NextRequest) {
   console.log("in middleware ");
@@ -54,10 +48,7 @@ export async function middleware(req: NextRequest) {
     }
   }
 
-  console.log("in middleware token: ", verifiedToken,req.nextUrl.pathname,isProtected)
-
   if (req.nextUrl.pathname === '/login' && verifiedToken) {
-    console.log("already login user redirect to dashboard")
     return NextResponse.redirect(new URL('/', req.url));
   }
 

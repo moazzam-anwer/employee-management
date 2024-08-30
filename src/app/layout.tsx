@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Header } from '../app/components/Header';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,15 +11,21 @@ export const metadata: Metadata = {
 
 
 export default function RootLayout({
+  header,
   children,
+  footer
+
 }: Readonly<{
+  header: React.ReactNode
   children: React.ReactNode;
+  footer: React.ReactNode
 }>) {
   return (
     <html lang="en">
     <body>
-      <Header/>
+      { header }
       <main>{children}</main>
+      { footer }
     </body>
   </html>
   );

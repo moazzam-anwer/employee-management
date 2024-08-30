@@ -1,6 +1,8 @@
 // app/api/users/route.ts
 import dbConnect from '@/app/lib/dbConnect';
 import UserModel from '@/app/model/UserList'
+import AddressModel from '@/app/model/AddressModel';
+import mongoose from 'mongoose';
 
 import { NextResponse } from 'next/server';
 
@@ -21,10 +23,12 @@ export async function GET(request: Request) {
   if (data.get('id')) {
     const userId = data.get('id');
 
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(userId).populate('address');
     if (user) {
+      console.log("user: " , user)
       // return NextResponse.json(user);
       const response = NextResponse.json(user);
+      
 
       // Set custom headers
       response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -55,13 +59,64 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try { 
     const newUser = await request.json();
-    const userData = await UserModel.create({
-      name:newUser.name,
-      description:newUser.description
-    })
+    const { name, email, address, phone, hobbies, gender } = newUser;
+    if(!name || !email || !address || !phone || !hobbies || !gender) {
+      return NextResponse.json({ message: 'Params are missing' },{status:400});
+    }
+    console.log('newUser',newUser)
 
-    return NextResponse.json({message: "User created"},{status: 201});
+      // Destructure address fields
+    const { area, city, state, country, pincode } = address;
+
+    // Transaction session to ensure both documents are created successfully
+    // const session = await mongoose.startSession();
+    // console.log('session',session)
+    // session.startTransaction();
+
+    try {
+
+      // Step 1: Create a new Address document with the reference to the User
+      const userAddress = new AddressModel({
+        area,
+        city,
+        state,
+        country,
+        pincode,
+        
+      });
+
+      await userAddress.save();
+      
+      // Step 2: Create a new User document
+      const user = new UserModel({ 
+        name,
+        email,
+        phone,
+        hobbies,
+        gender,
+        address: userAddress._id // Reference the address _id 
+      });
+      await user.save();
+  
+
+      // Commit the transaction
+      // await session.commitTransaction();
+      // session.endSession();
+      
+      // Respond with the created user and address
+      return NextResponse.json({message: "User created"},{status: 201});
+
+    } catch (err) {
+      
+      // If any error occurs, abort the transaction and end the session
+      // await session.abortTransaction();
+      // session.endSession();
+      console.error('Error creating user and address:', err);
+      return NextResponse.json({ message: 'Internal server error' },{status:500});
+    }
+
   } catch (err: any) {
+    
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
@@ -77,9 +132,22 @@ export async function PUT(request: Request) {
     console.log("updateObject: " , updateObject);
     const updatedUserData = {
       name: updateObject.name,
-      description: updateObject.description
+      email: updateObject.email,
+      phone: updateObject.phone,
+      hobbies: updateObject.hobbies,
+      gender: updateObject.gender,
     }
     const updatedUser = await UserModel.findOneAndUpdate({_id:id}, updatedUserData);
+    if(updatedUser) {
+      const updatedAddressData = {
+        area :updateObject.address.area,
+        city : updateObject.address.city,
+        state : updateObject.address.state,
+        country : updateObject.address.country,
+        pincode : updateObject.address.pincode
+      }
+      await AddressModel.findOneAndUpdate({_id:updatedUser.address}, updatedAddressData);
+    }
     
     return NextResponse.json(updatedUser,{status: 200});
   } catch (err:any) {
