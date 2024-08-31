@@ -86,6 +86,7 @@ export default function NewItem() {
   return (
     <div className="form-container">
       <h1>Add New User</h1>
+      <p className="mandatory-fields">* All fields are required </p>
       <form onSubmit={handleSubmit}>
         <div className="input-group">
           <label>Name:</label>

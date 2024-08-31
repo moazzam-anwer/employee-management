@@ -122,6 +122,7 @@ export default function EditUser({ params }: Props) {
     <div className="form-container">
       
       <h1>Edit Employee Details</h1>
+      <p className="mandatory-fields">* All fields are required </p>
       <form onSubmit={handleSubmit}>
         <div className="input-group">
           <label>Name:</label>
