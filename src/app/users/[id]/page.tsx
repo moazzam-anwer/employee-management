@@ -9,7 +9,7 @@ type Props = {
 };
 
 async function getUser(id: string) {
-  console.log("getUser");
+  console.log("getUser",process.env.NEXT_PUBLIC_API_URL);
   
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}api/user?id=${id}`, { cache: 'no-store' });
   if (!res.ok) {

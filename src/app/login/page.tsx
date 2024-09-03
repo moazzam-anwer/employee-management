@@ -46,6 +46,7 @@ export default function Login() {
       setIsSubmitting(true);
 
       try {
+        console.log("in login api ", process.env.NEXT_PUBLIC_API_URL)
         const loginres = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
