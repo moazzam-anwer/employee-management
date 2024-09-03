@@ -46,8 +46,9 @@ export default function Login() {
       setIsSubmitting(true);
 
       try {
-    
+        //static rendering
         const loginres = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
+          cache: "force-cache",
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, password }),
