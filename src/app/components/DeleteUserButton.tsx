@@ -29,7 +29,7 @@ const DeleteUserButton = ({ userId }: DeleteUserButtonProps) => {
 
   return (
     <button className="btn-delete" onClick={handleDelete}>
-      Delete User
+      Delete
     </button>
   );
 };
