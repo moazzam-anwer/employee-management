@@ -2,7 +2,7 @@
 import dbConnect from '@/app/lib/dbConnect';
 import UserModel from '@/app/model/UserList'
 import AddressModel from '@/app/model/AddressModel';
-import mongoose from 'mongoose';
+
 
 import { NextResponse } from 'next/server';
 
