@@ -13,9 +13,9 @@ export interface User extends Document {
 
 const UserSchema: Schema<User> = new Schema({
     name: {type: String, required: true},
-    email: {type: String, required: true},
+    email: {type: String, required: true, unique: true},
     hobbies: [{type: String}],  
-    phone: {type: Number, required: true},
+    phone: {type: Number, required: true, unique: true},
     gender: {type: String, required: true},
     address: {type: Schema.ObjectId, required: true, ref: "Address"},
     createdAt: {type: Date, default: Date.now},

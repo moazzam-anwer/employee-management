@@ -27,6 +27,7 @@ export default function NewItem() {
   const [hobbies, setHobbies] = useState<string[]>([]);
   const [gender, setGender] = useState('');
   const [errors, setErrors] = useState({} as Record<string, string>);
+  const [mainerror, setMainerror] = useState<string>("")
 
   // Validation function
   const validateForm = () => {
@@ -68,13 +69,35 @@ export default function NewItem() {
     }
 
     // If no errors, proceed with form submission
-    await fetch('/api/user', {
+    const updatedUser = await fetch('/api/user', {
+      cache : "no-store",
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, email, address, phone, hobbies, gender }),
     });
 
-    router.push('/');
+    const updateJson = await updatedUser.json();
+    // check if the user is updated 
+    if (updatedUser.ok) {
+      alert('User added successfully');
+      setName('');
+      setEmail('');
+      setAddress({
+        area: '',
+        city: '',
+        state: '',
+        country: '',
+        pincode: '',
+      });
+      setPhone('');
+      setHobbies([]);
+      setGender('');
+      router.push('/');
+    } else {
+      setMainerror(updateJson?.message);
+      // setMainerror(updatedUser?.message);
+    }
+    
   };
 
   // Handle change for multi-select hobbies
@@ -143,7 +166,7 @@ export default function NewItem() {
           </div>
           {errors.gender && <p className="error">{errors.gender}</p>}
         </div>
-
+        <p className='mandatory-fields'> {mainerror} </p>
         <button type="submit">Add User</button>
       </form>
     </div>

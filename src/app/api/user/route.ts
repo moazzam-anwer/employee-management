@@ -57,6 +57,7 @@ export async function GET(request: Request) {
 
 // POST a new User
 export async function POST(request: Request) {
+  await dbConnect();
   try { 
     const newUser = await request.json();
     const { name, email, address, phone, hobbies, gender } = newUser;
@@ -68,13 +69,27 @@ export async function POST(request: Request) {
       // Destructure address fields
     const { area, city, state, country, pincode } = address;
 
-    // Transaction session to ensure both documents are created successfully
+    //Transaction session to ensure both documents are created successfully
     // const session = await mongoose.startSession();
     // console.log('session',session)
     // session.startTransaction();
 
     try {
 
+      // check if email and phone is unique
+      const isDuplicate = await UserModel.findOne({$or: [{email}, {phone}]});
+
+      let errorMsg : string = "";
+      if(isDuplicate && isDuplicate.email == email) {
+        errorMsg = "Email already exists";
+
+      } else if(isDuplicate && isDuplicate.phone == phone) {
+        errorMsg = "Phone already exists";
+      }
+
+      if(errorMsg) {
+        return NextResponse.json({message: errorMsg, status:false},{status: 401});
+      }
       // Step 1: Create a new Address document with the reference to the User
       const userAddress = new AddressModel({
         area,
@@ -112,11 +127,11 @@ export async function POST(request: Request) {
       // await session.abortTransaction();
       // session.endSession();
       console.error('Error creating user and address:', err);
-      return NextResponse.json({ message: 'Internal server error' },{status:500});
+      return NextResponse.json({ message: 'Internal server errors' },{status:500});
     }
 
   } catch (err: any) {
-    
+    console.error('Error outer catch creating user and address:', err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
